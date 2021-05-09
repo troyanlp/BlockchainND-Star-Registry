@@ -74,9 +74,14 @@ class Blockchain {
         })
         .catch(error => console.log('[ERROR] ', error)) 
         .then(block => {
-            this.chain.push(block);
-            this.height = this.chain.length - 1;
-            return block;
+            self.validateChain().then(response => {
+                this.chain.push(block);
+                this.height = this.chain.length - 1;
+                return block;
+            }, reason => { // If validate fails return error and pop block
+                self.chain.pop();
+                resolve (reason)
+            });
         });
     }
 
